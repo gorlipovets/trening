@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Календарь — Сессия</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5848d6;
+            --secondary: #a29bfe;
+
+            --text: #202124;
+            --muted: #6b7280;
+
+            --bg: #f7f7fb;
+            --white: #ffffff;
+
+            --border: #e8e8f0;
+
+            --green: #35b779;
+            --red: #ef6262;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+
+            color: var(--text);
+            background: var(--bg);
+
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            width: 100%;
+
+            background: rgba(255, 255, 255, 0.95);
+
+            border-bottom: 1px solid var(--border);
+
+            position: sticky;
+            top: 0;
+
+            z-index: 100;
+
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 18px 24px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            font-size: 22px;
+
+            font-weight: 800;
+
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            color: white;
+
+            font-size: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+
+            gap: 30px;
+
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #555;
+
+            font-weight: 600;
+
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links .active {
+            color: var(--primary);
+        }
+
+
+        /* =========================
+           PAGE HEADER
+        ========================= */
+
+        .page-header {
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 70px 24px 40px;
+
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: clamp(42px, 6vw, 60px);
+
+            line-height: 1.1;
+
+            margin-bottom: 18px;
+
+            letter-spacing: -1.5px;
+        }
+
+        .page-header h1 span {
+            color: var(--primary);
+        }
+
+        .page-header p {
+            max-width: 650px;
+
+            margin: 0 auto;
+
+            font-size: 19px;
+
+            color: var(--muted);
+        }
+
+
+        /* =========================
+           CALENDAR AREA
+        ========================= */
+
+        .calendar-section {
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 20px 24px 80px;
+        }
+
+        .calendar-layout {
+            display: grid;
+
+            grid-template-columns: 1fr 340px;
+
+            gap: 25px;
+
+            align-items: start;
+        }
+
+
+        /* =========================
+           CALENDAR
+        ========================= */
+
+        .calendar {
+            background: var(--white);
+
+            border: 1px solid var(--border);
+
+            border-radius: 25px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 15px 40px rgba(40, 40, 80, 0.06);
+        }
+
+        .calendar-header {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 30px;
+        }
+
+        .month-title {
+            font-size: 27px;
+
+            font-weight: 800;
+
+            text-transform: capitalize;
+        }
+
+        .month-buttons {
+            display: flex;
+
+            gap: 8px;
+        }
+
+        .month-button {
+            width: 42px;
+            height: 42px;
+
+            border: 1px solid var(--border);
+
+            background: white;
+
+            border-radius: 12px;
+
+            cursor: pointer;
+
+            font-size: 20px;
+
+            transition: 0.2s;
+        }
+
+        .month-button:hover {
+            background: #f1efff;
+
+            color: var(--primary);
+
+            border-color: #dcd8ff;
+        }
+
+
+        /* DAYS OF WEEK */
+
+        .weekdays {
+            display: grid;
+
+            grid-template-columns: repeat(7, 1fr);
+
+            gap: 8px;
+
+            margin-bottom: 8px;
+        }
+
+        .weekday {
+            text-align: center;
+
+            color: var(--muted);
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            padding: 7px;
+        }
+
+
+        /* DAYS */
+
+        .days {
+            display: grid;
+
+            grid-template-columns: repeat(7, 1fr);
+
+            gap: 8px;
+        }
+
+        .day {
+            min-height: 72px;
+
+            border: 1px solid transparent;
+
+            background: #fafafd;
+
+            border-radius: 14px;
+
+            padding: 9px;
+
+            cursor: pointer;
+
+            position: relative;
+
+            transition: 0.2s;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: space-between;
+        }
+
+        .day:hover {
+            background: #f0eeff;
+
+            border-color: #dcd8ff;
+
+            transform: translateY(-2px);
+        }
+
+        .day.other-month {
+            opacity: 0.3;
+        }
+
+        .day-number {
+            font-weight: 700;
+
+            font-size: 14px;
+        }
+
+        .day.today {
+            border: 2px solid var(--primary);
+
+            background: #f2f0ff;
+        }
+
+        .day.today .day-number {
+            color: var(--primary);
+        }
+
+        .day.preparation {
+            background: #ece9ff;
+
+            border-color: #d5d0ff;
+        }
+
+        .day.preparation::after {
+            content: "";
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--primary);
+
+            position: absolute;
+
+            right: 9px;
+            bottom: 9px;
+        }
+
+        .day.today.preparation {
+            background: #e5e1ff;
+        }
+
+        .day-task {
+            font-size: 11px;
+
+            color: var(--primary);
+
+            font-weight: 700;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+
+        /* =========================
+           SIDE PANEL
+        ========================= */
+
+        .side-panel {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 20px;
+        }
+
+        .panel-card {
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 22px;
+
+            padding: 25px;
+        }
+
+        .panel-card h2 {
+            font-size: 21px;
+
+            margin-bottom: 8px;
+        }
+
+        .panel-description {
+            color: var(--muted);
+
+            font-size: 14px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* CURRENT DATE */
+
+        .today-box {
+            background:
+                linear-gradient(
+                    135deg,
+                    #6c5ce7,
+                    #8e7df5
+                );
+
+            color: white;
+
+            border-radius: 18px;
+
+            padding: 22px;
+
+            margin-bottom: 20px;
+        }
+
+        .today-box .small {
+            opacity: 0.8;
+
+            font-size: 13px;
+
+            margin-bottom: 4px;
+        }
+
+        .today-box .date {
+            font-size: 26px;
+
+            font-weight: 800;
+        }
+
+
+        /* FORM */
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            margin-bottom: 7px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+
+            padding: 12px 13px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 11px;
+
+            outline: none;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            background: white;
+
+            transition: 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 0 3px rgba(108, 92, 231, 0.10);
+        }
+
+        .add-button {
+            width: 100%;
+
+            border: none;
+
+            padding: 13px;
+
+            border-radius: 11px;
+
+            background: var(--primary);
+
+            color: white;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            transition: 0.2s;
+        }
+
+        .add-button:hover {
+            background: var(--primary-dark);
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 7px 18px rgba(108, 92, 231, 0.25);
+        }
+
+
+        /* TASK LIST */
+
+        .tasks-list {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+        }
+
+        .task-item {
+            padding: 13px;
+
+            border-radius: 12px;
+
+            background: #f8f8fc;
+
+            border: 1px solid #eeeeF5;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 10px;
+        }
+
+        .task-info {
+            min-width: 0;
+        }
+
+        .task-date {
+            font-size: 12px;
+
+            color: var(--primary);
+
+            font-weight: 700;
+
+            margin-bottom: 2px;
+        }
+
+        .task-name {
+            font-size: 14px;
+
+            font-weight: 600;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+        }
+
+        .delete-task {
+            border: none;
+
+            background: #ffecec;
+
+            color: var(--red);
+
+            width: 30px;
+            height: 30px;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+
+            flex-shrink: 0;
+
+            transition: 0.2s;
+        }
+
+        .delete-task:hover {
+            background: #ffdede;
+        }
+
+        .empty-tasks {
+            color: var(--muted);
+
+            font-size: 14px;
+
+            text-align: center;
+
+            padding: 15px 0;
+        }
+
+
+        /* =========================
+           NOTIFICATION
+        ========================= */
+
+        .notification {
+            position: fixed;
+
+            right: 25px;
+            bottom: 25px;
+
+            width: min(380px, calc(100% - 40px));
+
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 20px;
+
+            padding: 20px;
+
+            box-shadow:
+                0 20px 50px rgba(20, 20, 50, 0.20);
+
+            z-index: 1000;
+
+            transform: translateY(150px);
+
+            opacity: 0;
+
+            pointer-events: none;
+
+            transition: 0.35s;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+
+            opacity: 1;
+
+            pointer-events: auto;
+        }
+
+        .notification-content {
+            display: flex;
+
+            gap: 15px;
+
+            align-items: flex-start;
+        }
+
+        .notification-icon {
+            width: 45px;
+            height: 45px;
+
+            border-radius: 13px;
+
+            background: #eeecff;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 22px;
+
+            flex-shrink: 0;
+        }
+
+        .notification h3 {
+            font-size: 18px;
+
+            margin-bottom: 3px;
+        }
+
+        .notification p {
+            color: var(--muted);
+
+            font-size: 14px;
+        }
+
+        .close-notification {
+            position: absolute;
+
+            top: 12px;
+            right: 14px;
+
+            border: none;
+
+            background: none;
+
+            cursor: pointer;
+
+            color: #999;
+
+            font-size: 18px;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            background: #171720;
+
+            color: #aaa;
+
+            padding: 30px 24px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+        .footer-logo {
+            color: white;
+
+            font-weight: 700;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 950px) {
+
+            .calendar-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .side-panel {
+                display: grid;
+
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .nav-container {
+                padding: 14px 18px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .logo-icon {
+                width: 34px;
+                height: 34px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-links a:nth-child(1) {
+                display: none;
+            }
+
+            .page-header {
+                padding: 50px 20px 35px;
+            }
+
+            .page-header h1 {
+                font-size: 42px;
+            }
+
+            .page-header p {
+                font-size: 17px;
+            }
+
+            .calendar-section {
+                padding: 15px 12px 60px;
+            }
+
+            .calendar {
+                padding: 15px;
+
+                border-radius: 20px;
+            }
+
+            .calendar-header {
+                margin-bottom: 18px;
+            }
+
+            .month-title {
+                font-size: 20px;
+            }
+
+            .month-button {
+                width: 36px;
+                height: 36px;
+            }
+
+            .weekdays,
+            .days {
+                gap: 4px;
+            }
+
+            .day {
+                min-height: 52px;
+
+                padding: 6px;
+
+                border-radius: 9px;
+            }
+
+            .day-number {
+                font-size: 12px;
+            }
+
+            .day-task {
+                display: none;
+            }
+
+            .day.preparation::after {
+                width: 6px;
+                height: 6px;
+
+                right: 5px;
+                bottom: 5px;
+            }
+
+            .side-panel {
+                display: flex;
+            }
+
+            .footer-container {
+                flex-direction: column;
+
+                gap: 10px;
+
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <a href="index.html" class="logo">
+
+                <span class="logo-icon">
+                    🎓
+                </span>
+
+                Сессия
+
+            </a>
+
+
+            <nav class="nav-links">
+
+                <a href="trainer.html">
+                    Тренажёр
+                </a>
+
+                <a href="calendar.html" class="active">
+                    Календарь
+                </a>
+
+                <a href="ai.html">
+                    ИИ-помощник
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main>
+
+        <section class="page-header">
+
+            <h1>
+                Планируй свою
+                <span>подготовку</span>
+            </h1>
+
+            <p>
+                Отмечай дни подготовки, планируй занятия
+                и следи за тем, чтобы ничего не пропустить.
+            </p>
+
+        </section>
+
+
+        <section class="calendar-section">
+
+            <div class="calendar-layout">
+
+
+                <!-- =========================
+                     CALENDAR
+                ========================== -->
+
+                <div class="calendar">
+
+                    <div class="calendar-header">
+
+                        <div
+                            class="month-title"
+                            id="monthTitle"
+                        >
+                            Январь 2026
+                        </div>
+
+
+                        <div class="month-buttons">
+
+                            <button
+                                class="month-button"
+                                id="prevMonth"
+                                title="Предыдущий месяц"
+                            >
+                                ←
+                            </button>
+
+                            <button
+                                class="month-button"
+                                id="nextMonth"
+                                title="Следующий месяц"
+                            >
+                                →
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ДНИ НЕДЕЛИ -->
+
+                    <div class="weekdays">
+
+                        <div class="weekday">Пн</div>
+                        <div class="weekday">Вт</div>
+                        <div class="weekday">Ср</div>
+                        <div class="weekday">Чт</div>
+                        <div class="weekday">Пт</div>
+                        <div class="weekday">Сб</div>
+                        <div class="weekday">Вс</div>
+
+                    </div>
+
+
+                    <!-- ДНИ -->
+
+                    <div
+                        class="days"
+                        id="calendarDays"
+                    ></div>
+
+                </div>
+
+
+                <!-- =========================
+                     SIDE PANEL
+                ========================== -->
+
+                <div class="side-panel">
+
+
+                    <!-- TODAY -->
+
+                    <div class="panel-card">
+
+                        <div class="today-box">
+
+                            <div class="small">
+                                Сегодня
+                            </div>
+
+                            <div
+                                class="date"
+                                id="todayDate"
+                            >
+                                —
+                            </div>
+
+                        </div>
+
+                        <h2>
+                            Добавить подготовку
+                        </h2>
+
+                        <p class="panel-description">
+                            Выбери дату в календаре или
+                            укажи её вручную.
+                        </p>
+
+
+                        <div class="form-group">
+
+                            <label for="taskDate">
+                                Дата
+                            </label>
+
+                            <input
+                                type="date"
+                                id="taskDate"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="taskName">
+                                Что нужно сделать?
+                            </label>
+
+                            <input
+                                type="text"
+                                id="taskName"
+                                placeholder="Например: повторить матан"
+                            >
+
+                        </div>
+
+
+                        <button
+                            class="add-button"
+                            id="addTask"
+                        >
+                            + Добавить подготовку
+                        </button>
+
+                    </div>
+
+
+                    <!-- TASKS -->
+
+                    <div class="panel-card">
+
+                        <h2>
+                            Запланировано
+                        </h2>
+
+                        <p class="panel-description">
+                            Твои ближайшие дни подготовки.
+                        </p>
+
+                        <div
+                            class="tasks-list"
+                            id="tasksList"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         NOTIFICATION
+    ========================== -->
+
+    <div
+        class="notification"
+        id="notification"
+    >
+
+        <button
+            class="close-notification"
+            id="closeNotification"
+        >
+            ×
+        </button>
+
+        <div class="notification-content">
+
+            <div class="notification-icon">
+                🚀
+            </div>
+
+            <div>
+
+                <h3>
+                    Пора за работу!
+                </h3>
+
+                <p id="notificationText">
+                    Сегодня у тебя запланирована подготовка.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <div class="footer-container">
+
+            <div class="footer-logo">
+                🎓 Сессия
+            </div>
+
+            <div>
+                © 2026 Сервис для подготовки к сессии
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        /*
+         * Получаем элементы страницы
+         */
+
+        const calendarDays =
+            document.getElementById("calendarDays");
+
+        const monthTitle =
+            document.getElementById("monthTitle");
+
+        const prevMonth =
+            document.getElementById("prevMonth");
+
+        const nextMonth =
+            document.getElementById("nextMonth");
+
+        const taskDate =
+            document.getElementById("taskDate");
+
+        const taskName =
+            document.getElementById("taskName");
+
+        const addTask =
+            document.getElementById("addTask");
+
+        const tasksList =
+            document.getElementById("tasksList");
+
+        const todayDate =
+            document.getElementById("todayDate");
+
+        const notification =
+            document.getElementById("notification");
+
+        const notificationText =
+            document.getElementById("notificationText");
+
+        const closeNotification =
+            document.getElementById("closeNotification");
+
+
+        /*
+         * Названия месяцев
+         */
+
+        const months = [
+            "январь",
+            "февраль",
+            "март",
+            "апрель",
+            "май",
+            "июнь",
+            "июль",
+            "август",
+            "сентябрь",
+            "октябрь",
+            "ноябрь",
+            "декабрь"
+        ];
+
+
+        /*
+         * Текущая дата устройства
+         */
+
+        const currentDeviceDate = new Date();
+
+
+        /*
+         * Текущий отображаемый месяц
+         */
+
+        let displayedDate = new Date(
+            currentDeviceDate.getFullYear(),
+            currentDeviceDate.getMonth(),
+            1
+        );
+
+
+        /*
+         * Получаем сохранённые задачи
+         *
+         * localStorage позволяет сохранить
+         * данные даже после закрытия сайта.
+         */
+
+        let preparationTasks =
+            JSON.parse(
+                localStorage.getItem("preparationTasks")
+            ) || [];
+
+
+        /*
+         * Форматирование даты
+         */
+
+        function formatDate(date) {
+
+            const year =
+                date.getFullYear();
+
+            const month =
+                String(date.getMonth() + 1)
+                    .padStart(2, "0");
+
+            const day =
+                String(date.getDate())
+                    .padStart(2, "0");
+
+            return `${year}-${month}-${day}`;
+        }
+
+
+        /*
+         * Красивое отображение даты
+         */
+
+        function formatRussianDate(dateString) {
+
+            const date =
+                new Date(
+                    dateString + "T00:00:00"
+                );
+
+            return date.toLocaleDateString(
+                "ru-RU",
+                {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+        }
+
+
+        /*
+         * Показываем сегодняшнюю дату
+         */
+
+        function renderToday() {
+
+            const today =
+                currentDeviceDate.toLocaleDateString(
+                    "ru-RU",
+                    {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+                    }
+                );
+
+            todayDate.textContent = today;
+
+            /*
+             * Устанавливаем сегодняшнюю дату
+             * в поле добавления задачи.
+             */
+
+            taskDate.value =
+                formatDate(currentDeviceDate);
+        }
+
+
+        /*
+         * Рисуем календарь
+         */
+
+        function renderCalendar() {
+
+            calendarDays.innerHTML = "";
+
+
+            const year =
+                displayedDate.getFullYear();
+
+            const month =
+                displayedDate.getMonth();
+
+
+            monthTitle.textContent =
+                `${months[month]} ${year}`;
+
+
+            /*
+             * Первый день месяца
+             */
+
+            const firstDay =
+                new Date(year, month, 1);
+
+
+            /*
+             * Последний день месяца
+             */
+
+            const lastDay =
+                new Date(year, month + 1, 0);
+
+
+            /*
+             * День недели первого числа.
+             *
+             * В JavaScript:
+             * воскресенье = 0
+             *
+             * Нам нужно:
+             * понедельник = 0
+             */
+
+            let startDay =
+                firstDay.getDay();
+
+            if (startDay === 0) {
+                startDay = 7;
+            }
+
+            startDay--;
+
+
+            /*
+             * Добавляем дни предыдущего месяца
+             */
+
+            const previousMonthLastDay =
+                new Date(year, month, 0)
+                    .getDate();
+
+            for (
+                let i = startDay - 1;
+                i >= 0;
+                i--
+            ) {
+
+                const dayNumber =
+                    previousMonthLastDay - i;
+
+                const cell =
+                    createDayCell(
+                        year,
+                        month - 1,
+                        dayNumber,
+                        true
+                    );
+
+                calendarDays.appendChild(cell);
+            }
+
+
+            /*
+             * Добавляем дни текущего месяца
+             */
+
+            for (
+                let day = 1;
+                day <= lastDay.getDate();
+                day++
+            ) {
+
+                const cell =
+                    createDayCell(
+                        year,
+                        month,
+                        day,
+                        false
+                    );
+
+                calendarDays.appendChild(cell);
+            }
+
+
+            /*
+             * Заполняем остаток календаря
+             * днями следующего месяца
+             */
+
+            const totalCells =
+                42;
+
+            const cellsUsed =
+                startDay + lastDay.getDate();
+
+            const remaining =
+                totalCells - cellsUsed;
+
+            for (
+                let day = 1;
+                day <= remaining;
+                day++
+            ) {
+
+                const cell =
+                    createDayCell(
+                        year,
+                        month + 1,
+                        day,
+                        true
+                    );
+
+                calendarDays.appendChild(cell);
+            }
+        }
+
+
+        /*
+         * Создание одной ячейки календаря
+         */
+
+        function createDayCell(
+            year,
+            month,
+            dayNumber,
+            otherMonth
+        ) {
+
+            const date =
+                new Date(
+                    year,
+                    month,
+                    dayNumber
+                );
+
+
+            const dateString =
+                formatDate(date);
+
+
+            const cell =
+                document.createElement("div");
+
+            cell.className = "day";
+
+
+            if (otherMonth) {
+                cell.classList.add(
+                    "other-month"
+                );
+            }
+
+
+            /*
+             * Проверяем, является ли дата сегодняшней
+             */
+
+            if (
+                dateString ===
+                formatDate(currentDeviceDate)
+            ) {
+
+                cell.classList.add("today");
+            }
+
+
+            /*
+             * Проверяем, есть ли подготовка
+             * на эту дату.
+             */
+
+            const task =
+                preparationTasks.find(
+                    item =>
+                        item.date === dateString
+                );
+
+
+            if (task) {
+
+                cell.classList.add(
+                    "preparation"
+                );
+            }
+
+
+            /*
+             * Номер дня
+             */
+
+            const number =
+                document.createElement("div");
+
+            number.className =
+                "day-number";
+
+            number.textContent =
+                dayNumber;
+
+
+            cell.appendChild(number);
+
+
+            /*
+             * Название задачи
+             */
+
+            if (task) {
+
+                const taskElement =
+                    document.createElement("div");
+
+                taskElement.className =
+                    "day-task";
+
+                taskElement.textContent =
+                    task.name;
+
+                cell.appendChild(
+                    taskElement
+                );
+            }
+
+
+            /*
+             * При нажатии на день
+             * устанавливаем дату в форме.
+             */
+
+            cell.addEventListener(
+                "click",
+                function () {
+
+                    taskDate.value =
+                        dateString;
+
+                    taskName.focus();
+                }
+            );
+
+
+            return cell;
+        }
+
+
+        /*
+         * Добавление задачи
+         */
+
+        addTask.addEventListener(
+            "click",
+            function () {
+
+                const date =
+                    taskDate.value;
+
+                const name =
+                    taskName.value.trim();
+
+
+                if (!date) {
+
+                    alert(
+                        "Выбери дату подготовки."
+                    );
+
+                    return;
+                }
+
+
+                if (!name) {
+
+                    alert(
+                        "Напиши, что нужно сделать."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * Если на эту дату уже
+                 * есть задача — заменяем её.
+                 */
+
+                const existingIndex =
+                    preparationTasks.findIndex(
+                        item =>
+                            item.date === date
+                    );
+
+
+                const newTask = {
+                    date: date,
+                    name: name
+                };
+
+
+                if (existingIndex !== -1) {
+
+                    preparationTasks[
+                        existingIndex
+                    ] = newTask;
+
+                } else {
+
+                    preparationTasks.push(
+                        newTask
+                    );
+                }
+
+
+                saveTasks();
+
+                taskName.value = "";
+
+                renderCalendar();
+
+                renderTasks();
+
+                /*
+                 * Если задача добавлена
+                 * на сегодняшний день —
+                 * сразу показываем уведомление.
+                 */
+
+                if (
+                    date ===
+                    formatDate(currentDeviceDate)
+                ) {
+
+                    showNotification(
+                        name
+                    );
+                }
+            }
+        );
+
+
+        /*
+         * Сохранение задач
+         */
+
+        function saveTasks() {
+
+            localStorage.setItem(
+                "preparationTasks",
+                JSON.stringify(
+                    preparationTasks
+                )
+            );
+        }
+
+
+        /*
+         * Отображение списка задач
+         */
+
+        function renderTasks() {
+
+            tasksList.innerHTML = "";
+
+
+            /*
+             * Сортируем задачи по дате
+             */
+
+            const sortedTasks =
+                [...preparationTasks]
+                    .sort(
+                        (a, b) =>
+                            a.date.localeCompare(
+                                b.date
+                            )
+                    );
+
+
+            if (sortedTasks.length === 0) {
+
+                tasksList.innerHTML = `
+                    <div class="empty-tasks">
+                        Пока ничего не запланировано.
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            /*
+             * Показываем только ближайшие
+             * 8 задач.
+             */
+
+            sortedTasks
+                .slice(0, 8)
+                .forEach(task => {
+
+                    const item =
+                        document.createElement(
+                            "div"
+                        );
+
+                    item.className =
+                        "task-item";
+
+
+                    item.innerHTML = `
+
+                        <div class="task-info">
+
+                            <div class="task-date">
+                                ${formatRussianDate(task.date)}
+                            </div>
+
+                            <div class="task-name">
+                                ${escapeHtml(task.name)}
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="delete-task"
+                            title="Удалить"
+                        >
+                            ×
+                        </button>
+                    `;
+
+
+                    /*
+                     * Удаление задачи
+                     */
+
+                    item
+                        .querySelector(
+                            ".delete-task"
+                        )
+                        .addEventListener(
+                            "click",
+                            function () {
+
+                                preparationTasks =
+                                    preparationTasks.filter(
+                                        currentTask =>
+                                            !(
+                                                currentTask.date ===
+                                                task.date
+                                            )
+                                    );
+
+
+                                saveTasks();
+
+                                renderCalendar();
+
+                                renderTasks();
+                            }
+                        );
+
+
+                    tasksList.appendChild(
+                        item
+                    );
+
+                });
+        }
+
+
+        /*
+         * Защита текста от вставки HTML
+         */
+
+        function escapeHtml(text) {
+
+            const div =
+                document.createElement("div");
+
+            div.textContent = text;
+
+            return div.innerHTML;
+        }
+
+
+        /*
+         * Переключение месяца
+         */
+
+        prevMonth.addEventListener(
+            "click",
+            function () {
+
+                displayedDate =
+                    new Date(
+                        displayedDate.getFullYear(),
+                        displayedDate.getMonth() - 1,
+                        1
+                    );
+
+                renderCalendar();
+            }
+        );
+
+
+        nextMonth.addEventListener(
+            "click",
+            function () {
+
+                displayedDate =
+                    new Date(
+                        displayedDate.getFullYear(),
+                        displayedDate.getMonth() + 1,
+                        1
+                    );
+
+                renderCalendar();
+            }
+        );
+
+
+        /*
+         * Внутреннее уведомление сайта
+         */
+
+        function showNotification(
+            taskNameValue
+        ) {
+
+            notificationText.textContent =
+                `Сегодня запланировано: ${taskNameValue}.`;
+
+            notification.classList.add(
+                "show"
+            );
+
+
+            /*
+             * Автоматически скрываем
+             * уведомление через 7 секунд.
+             */
+
+            setTimeout(
+                function () {
+
+                    notification.classList.remove(
+                        "show"
+                    );
+
+                },
+                7000
+            );
+        }
+
+
+        /*
+         * Закрытие уведомления
+         */
+
+        closeNotification.addEventListener(
+            "click",
+            function () {
+
+                notification.classList.remove(
+                    "show"
+                );
+            }
+        );
+
+
+        /*
+         * Проверка сегодняшней даты
+         */
+
+        function checkTodayTasks() {
+
+            const today =
+                formatDate(
+                    new Date()
+                );
+
+
+            const todayTasks =
+                preparationTasks.filter(
+                    task =>
+                        task.date === today
+                );
+
+
+            if (todayTasks.length > 0) {
+
+                const names =
+                    todayTasks
+                        .map(task => task.name)
+                        .join(", ");
+
+
+                showNotification(
+                    names
+                );
+
+
+                /*
+                 * Пытаемся отправить
+                 * системное уведомление браузера.
+                 */
+
+                sendBrowserNotification(
+                    names
+                );
+            }
+        }
+
+
+        /*
+         * Системное уведомление браузера
+         */
+
+        function sendBrowserNotification(
+            taskNameValue
+        ) {
+
+            /*
+             * Проверяем поддержку
+             */
+
+            if (
+                !("Notification" in window)
+            ) {
+                return;
+            }
+
+
+            /*
+             * Если разрешение уже получено
+             */
+
+            if (
+                Notification.permission ===
+                "granted"
+            ) {
+
+                new Notification(
+                    "Пора за работу! 🚀",
+                    {
+                        body:
+                            `Сегодня: ${taskNameValue}`
+                    }
+                );
+
+                return;
+            }
+
+
+            /*
+             * Запрашиваем разрешение.
+             *
+             * В некоторых браузерах запрос
+             * должен происходить после
+             * действия пользователя.
+             */
+
+            if (
+                Notification.permission !==
+                "denied"
+            ) {
+
+                Notification.requestPermission()
+                    .then(
+                        permission => {
+
+                            if (
+                                permission ===
+                                "granted"
+                            ) {
+
+                                new Notification(
+                                    "Пора за работу! 🚀",
+                                    {
+                                        body:
+                                            `Сегодня: ${taskNameValue}`
+                                    }
+                                );
+                            }
+
+                        }
+                    );
+            }
+        }
+
+
+        /*
+         * Инициализация
+         */
+
+        renderToday();
+
+        renderCalendar();
+
+        renderTasks();
+
+        /*
+         * Проверяем задачи сегодняшнего дня
+         * при открытии страницы.
+         */
+
+        checkTodayTasks();
+
+
+        /*
+         * Проверяем дату каждые 60 секунд.
+         *
+         * Это нужно на случай, если пользователь
+         * держит страницу открытой в течение дня.
+         */
+
+        setInterval(
+            checkTodayTasks,
+            60000
+        );
+
+    </script>
+
+</body>
+</html>
