@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ИИ-помощник — Сессия</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5848d6;
+            --secondary: #a29bfe;
+
+            --text: #202124;
+            --muted: #6b7280;
+
+            --bg: #f7f7fb;
+            --white: #ffffff;
+
+            --border: #e8e8f0;
+
+            --user-message: #6c5ce7;
+            --ai-message: #f2f1f8;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+
+            color: var(--text);
+            background: var(--bg);
+
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================== */
+
+        .navbar {
+            width: 100%;
+
+            background: rgba(255, 255, 255, 0.95);
+
+            border-bottom: 1px solid var(--border);
+
+            position: sticky;
+            top: 0;
+
+            z-index: 100;
+
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 18px 24px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            font-size: 22px;
+
+            font-weight: 800;
+
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+
+            border-radius: 12px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            color: white;
+
+            font-size: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+
+            gap: 30px;
+
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #555;
+
+            font-weight: 600;
+
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links .active {
+            color: var(--primary);
+        }
+
+
+        /* =========================
+           PAGE
+        ========================== */
+
+        .page {
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 45px 24px 70px;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================== */
+
+        .page-header {
+            text-align: center;
+
+            margin-bottom: 35px;
+        }
+
+        .page-header h1 {
+            font-size: clamp(40px, 6vw, 56px);
+
+            line-height: 1.1;
+
+            margin-bottom: 14px;
+
+            letter-spacing: -1.5px;
+        }
+
+        .page-header h1 span {
+            color: var(--primary);
+        }
+
+        .page-header p {
+            color: var(--muted);
+
+            font-size: 18px;
+        }
+
+
+        /* =========================
+           AI LAYOUT
+        ========================== */
+
+        .ai-layout {
+            display: grid;
+
+            grid-template-columns: 280px 1fr;
+
+            gap: 22px;
+
+            align-items: stretch;
+        }
+
+
+        /* =========================
+           SIDEBAR
+        ========================== */
+
+        .sidebar {
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 22px;
+
+            padding: 22px;
+
+            height: fit-content;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+
+            font-weight: 800;
+
+            color: #555;
+
+            margin-bottom: 15px;
+        }
+
+        .ai-mode {
+            width: 100%;
+
+            border: 1px solid var(--border);
+
+            background: white;
+
+            border-radius: 14px;
+
+            padding: 14px;
+
+            text-align: left;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 10px;
+
+            transition: 0.2s;
+        }
+
+        .ai-mode:hover {
+            border-color: #cfcaff;
+
+            background: #faf9ff;
+        }
+
+        .ai-mode.active {
+            border-color: var(--primary);
+
+            background: #f0eeff;
+        }
+
+        .mode-icon {
+            width: 40px;
+            height: 40px;
+
+            border-radius: 11px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background: #eeecff;
+
+            font-size: 19px;
+
+            flex-shrink: 0;
+        }
+
+        .mode-info strong {
+            display: block;
+
+            font-size: 14px;
+
+            margin-bottom: 2px;
+        }
+
+        .mode-info span {
+            display: block;
+
+            color: var(--muted);
+
+            font-size: 11px;
+        }
+
+
+        /* ATTACH AI */
+
+        .attach-ai {
+            margin-top: 25px;
+
+            padding-top: 20px;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .attach-ai h3 {
+            font-size: 16px;
+
+            margin-bottom: 7px;
+        }
+
+        .attach-ai p {
+            color: var(--muted);
+
+            font-size: 12px;
+
+            margin-bottom: 14px;
+        }
+
+        .attach-button {
+            width: 100%;
+
+            padding: 11px;
+
+            border-radius: 11px;
+
+            border: 1px dashed #b9b4ef;
+
+            background: #faf9ff;
+
+            color: var(--primary);
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .attach-button:hover {
+            background: #f0eeff;
+
+            border-color: var(--primary);
+        }
+
+        #aiFile {
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 8px;
+
+            font-size: 11px;
+
+            color: var(--muted);
+
+            word-break: break-word;
+        }
+
+
+        /* =========================
+           CHAT
+        ========================== */
+
+        .chat {
+            min-width: 0;
+
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 22px;
+
+            overflow: hidden;
+
+            display: flex;
+
+            flex-direction: column;
+
+            height: 670px;
+
+            box-shadow:
+                0 15px 40px rgba(40, 40, 80, 0.06);
+        }
+
+
+        /* CHAT HEADER */
+
+        .chat-header {
+            padding: 17px 22px;
+
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+        .assistant-info {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .assistant-avatar {
+            width: 43px;
+            height: 43px;
+
+            border-radius: 13px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: white;
+
+            font-size: 21px;
+        }
+
+        .assistant-name {
+            font-weight: 800;
+
+            font-size: 15px;
+        }
+
+        .assistant-status {
+            color: #35a66d;
+
+            font-size: 11px;
+
+            margin-top: 1px;
+        }
+
+        .clear-chat {
+            border: none;
+
+            background: #f4f4f8;
+
+            color: #666;
+
+            padding: 8px 11px;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            transition: 0.2s;
+        }
+
+        .clear-chat:hover {
+            background: #ececf2;
+
+            color: #333;
+        }
+
+
+        /* MESSAGES */
+
+        .messages {
+            flex: 1;
+
+            overflow-y: auto;
+
+            padding: 25px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 17px;
+
+            background:
+                linear-gradient(
+                    #ffffff,
+                    #fbfbfd
+                );
+        }
+
+        .message {
+            display: flex;
+
+            max-width: 78%;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+        }
+
+        .message.user {
+            align-self: flex-end;
+        }
+
+        .message-bubble {
+            padding: 13px 16px;
+
+            border-radius: 17px;
+
+            font-size: 14px;
+
+            line-height: 1.55;
+        }
+
+        .message.ai .message-bubble {
+            background: var(--ai-message);
+
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.user .message-bubble {
+            background: var(--user-message);
+
+            color: white;
+
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 10px;
+
+            color: #aaa;
+
+            margin-top: 5px;
+
+            padding: 0 4px;
+        }
+
+
+        /* ATTACHMENT */
+
+        .attachment {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 7px 9px;
+
+            border-radius: 9px;
+
+            background: rgba(255,255,255,0.15);
+
+            margin-top: 8px;
+
+            font-size: 11px;
+        }
+
+
+        /* TYPING */
+
+        .typing {
+            display: none;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 12px 16px;
+
+            background: var(--ai-message);
+
+            border-radius: 17px;
+
+            width: fit-content;
+
+            border-bottom-left-radius: 5px;
+        }
+
+        .typing.show {
+            display: flex;
+        }
+
+        .typing span {
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: #999;
+
+            animation: typing 1s infinite;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes typing {
+
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-4px);
+            }
+        }
+
+
+        /* =========================
+           INPUT
+        ========================== */
+
+        .chat-input-area {
+            padding: 15px;
+
+            border-top: 1px solid var(--border);
+
+            background: white;
+        }
+
+        .selected-file {
+            display: none;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+            padding: 8px 12px;
+
+            margin-bottom: 9px;
+
+            background: #f4f2ff;
+
+            border-radius: 10px;
+
+            font-size: 12px;
+
+            color: var(--primary);
+        }
+
+        .selected-file.show {
+            display: flex;
+        }
+
+        .remove-file {
+            border: none;
+
+            background: none;
+
+            color: #999;
+
+            cursor: pointer;
+
+            font-size: 16px;
+        }
+
+        .input-row {
+            display: flex;
+
+            align-items: flex-end;
+
+            gap: 9px;
+        }
+
+        .attach-message {
+            width: 43px;
+            height: 43px;
+
+            border-radius: 12px;
+
+            border: 1px solid var(--border);
+
+            background: white;
+
+            cursor: pointer;
+
+            font-size: 19px;
+
+            flex-shrink: 0;
+
+            transition: 0.2s;
+        }
+
+        .attach-message:hover {
+            border-color: var(--primary);
+
+            background: #faf9ff;
+        }
+
+        #messageInput {
+            flex: 1;
+
+            resize: none;
+
+            min-height: 43px;
+
+            max-height: 120px;
+
+            padding: 12px 13px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 12px;
+
+            outline: none;
+
+            font-family: inherit;
+
+            font-size: 14px;
+        }
+
+        #messageInput:focus {
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 0 3px rgba(108, 92, 231, 0.09);
+        }
+
+        .send-button {
+            width: 43px;
+            height: 43px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background: var(--primary);
+
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 18px;
+
+            flex-shrink: 0;
+
+            transition: 0.2s;
+        }
+
+        .send-button:hover {
+            background: var(--primary-dark);
+
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================
+           INFO
+        ========================== */
+
+        .info {
+            margin-top: 22px;
+
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 20px;
+
+            padding: 23px;
+
+            display: flex;
+
+            gap: 14px;
+
+            align-items: flex-start;
+        }
+
+        .info-icon {
+            width: 43px;
+            height: 43px;
+
+            border-radius: 12px;
+
+            background: #eeecff;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+        }
+
+        .info h3 {
+            font-size: 16px;
+
+            margin-bottom: 3px;
+        }
+
+        .info p {
+            color: var(--muted);
+
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        footer {
+            background: #171720;
+
+            color: #aaa;
+
+            padding: 30px 24px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+        .footer-logo {
+            color: white;
+
+            font-weight: 700;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 850px) {
+
+            .ai-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: grid;
+
+                grid-template-columns: repeat(2, 1fr);
+
+                gap: 10px;
+            }
+
+            .sidebar-title,
+            .attach-ai {
+                grid-column: 1 / -1;
+            }
+
+            .ai-mode {
+                margin-bottom: 0;
+            }
+
+            .chat {
+                height: 650px;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .nav-container {
+                padding: 14px 18px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .logo-icon {
+                width: 34px;
+                height: 34px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-links a:nth-child(1) {
+                display: none;
+            }
+
+            .page {
+                padding: 35px 15px 55px;
+            }
+
+            .page-header {
+                margin-bottom: 25px;
+            }
+
+            .page-header h1 {
+                font-size: 40px;
+            }
+
+            .page-header p {
+                font-size: 16px;
+            }
+
+            .sidebar {
+                display: flex;
+
+                flex-direction: column;
+            }
+
+            .chat {
+                height: 620px;
+
+                border-radius: 18px;
+            }
+
+            .messages {
+                padding: 17px;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .footer-container {
+                flex-direction: column;
+
+                gap: 10px;
+
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <a href="index.html" class="logo">
+
+                <span class="logo-icon">
+                    🎓
+                </span>
+
+                Сессия
+
+            </a>
+
+
+            <nav class="nav-links">
+
+                <a href="trainer.html">
+                    Тренажёр
+                </a>
+
+                <a href="calendar.html">
+                    Календарь
+                </a>
+
+                <a href="ai.html" class="active">
+                    ИИ-помощник
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <main class="page">
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <section class="page-header">
+
+            <h1>
+                Твой
+                <span>ИИ-помощник</span>
+            </h1>
+
+            <p>
+                Задавай вопросы, разбирай сложные темы
+                и готовься к экзаменам вместе с ИИ.
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             AI AREA
+        ========================== -->
+
+        <section class="ai-layout">
+
+
+            <!-- =========================
+                 SIDEBAR
+            ========================== -->
+
+            <aside class="sidebar">
+
+                <div class="sidebar-title">
+                    Режим помощника
+                </div>
+
+
+                <button
+                    class="ai-mode active"
+                    data-mode="study"
+                >
+
+                    <div class="mode-icon">
+                        📚
+                    </div>
+
+                    <div class="mode-info">
+
+                        <strong>
+                            Подготовка
+                        </strong>
+
+                        <span>
+                            Помощь с учёбой
+                        </span>
+
+                    </div>
+
+                </button>
+
+
+                <button
+                    class="ai-mode"
+                    data-mode="math"
+                >
+
+                    <div class="mode-icon">
+                        🧮
+                    </div>
+
+                    <div class="mode-info">
+
+                        <strong>
+                            Математика
+                        </strong>
+
+                        <span>
+                            Разбор задач
+                        </span>
+
+                    </div>
+
+                </button>
+
+
+                <button
+                    class="ai-mode"
+                    data-mode="programming"
+                >
+
+                    <div class="mode-icon">
+                        💻
+                    </div>
+
+                    <div class="mode-info">
+
+                        <strong>
+                            Программирование
+                        </strong>
+
+                        <span>
+                            Код и алгоритмы
+                        </span>
+
+                    </div>
+
+                </button>
+
+
+                <!-- =========================
+                     ПОДКЛЮЧЕНИЕ СВОЕГО ИИ
+                ========================== -->
+
+                <div class="attach-ai">
+
+                    <h3>
+                        Подключить своего ИИ
+                    </h3>
+
+                    <p>
+                        Можно загрузить файл конфигурации
+                        или выбрать файл с настройками
+                        собственного помощника.
+                    </p>
+
+                    <label
+                        for="aiFile"
+                        class="attach-button"
+                    >
+                        📎 Подключить помощника
+                    </label>
+
+                    <input
+                        type="file"
+                        id="aiFile"
+                        accept=".json,.txt,.js"
+                    >
+
+                    <div
+                        class="file-name"
+                        id="aiFileName"
+                    ></div>
+
+                </div>
+
+            </aside>
+
+
+            <!-- =========================
+                 CHAT
+            ========================== -->
+
+            <section class="chat">
+
+
+                <!-- CHAT HEADER -->
+
+                <div class="chat-header">
+
+                    <div class="assistant-info">
+
+                        <div class="assistant-avatar">
+                            🤖
+                        </div>
+
+                        <div>
+
+                            <div class="assistant-name">
+                                Учебный помощник
+                            </div>
+
+                            <div class="assistant-status">
+                                ● Готов помочь
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="clear-chat"
+                        id="clearChat"
+                    >
+                        Очистить чат
+                    </button>
+
+                </div>
+
+
+                <!-- MESSAGES -->
+
+                <div
+                    class="messages"
+                    id="messages"
+                >
+
+                    <div class="message ai">
+
+                        <div>
+
+                            <div class="message-bubble">
+
+                                Привет! 👋
+
+                                <br><br>
+
+                                Я помогу тебе подготовиться
+                                к сессии. Можешь задать мне
+                                вопрос, отправить задачу или
+                                прикрепить учебный материал.
+
+                                <br><br>
+
+                                С чего начнём?
+
+                            </div>
+
+                            <div class="message-time">
+                                Сейчас
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- typing -->
+
+                    <div
+                        class="typing"
+                        id="typing"
+                    >
+
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     INPUT
+                ========================== -->
+
+                <div class="chat-input-area">
+
+
+                    <div
+                        class="selected-file"
+                        id="selectedFile"
+                    >
+
+                        <span id="selectedFileName">
+                            файл
+                        </span>
+
+                        <button
+                            class="remove-file"
+                            id="removeFile"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+
+                    <div class="input-row">
+
+                        <label
+                            for="messageFile"
+                            class="attach-message"
+                            title="Прикрепить файл"
+                        >
+                            📎
+                        </label>
+
+                        <input
+                            type="file"
+                            id="messageFile"
+                            hidden
+                            accept=".txt,.pdf,.doc,.docx,.jpg,.jpeg,.png"
+                        >
+
+
+                        <textarea
+                            id="messageInput"
+                            placeholder="Напиши свой вопрос..."
+                            rows="1"
+                        ></textarea>
+
+
+                        <button
+                            class="send-button"
+                            id="sendButton"
+                            title="Отправить"
+                        >
+                            ➤
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+
+        <!-- =========================
+             INFO
+        ========================== -->
+
+        <section class="info">
+
+            <div class="info-icon">
+                💡
+            </div>
+
+            <div>
+
+                <h3>
+                    Как пользоваться помощником?
+                </h3>
+
+                <p>
+                    Напиши вопрос обычным языком. Например:
+                    «Объясни мне производную простыми словами»
+                    или «Помоги решить эту задачу по матанализу».
+                    Также можно прикрепить учебный материал
+                    и попросить ИИ разобрать его.
+
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <div class="footer-container">
+
+            <div class="footer-logo">
+                🎓 Сессия
+            </div>
+
+            <div>
+                © 2026 Сервис для подготовки к сессии
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        /*
+         * ==========================================
+         * ЭЛЕМЕНТЫ
+         * ==========================================
+         */
+
+        const messages =
+            document.getElementById("messages");
+
+        const messageInput =
+            document.getElementById("messageInput");
+
+        const sendButton =
+            document.getElementById("sendButton");
+
+        const typing =
+            document.getElementById("typing");
+
+        const clearChat =
+            document.getElementById("clearChat");
+
+        const messageFile =
+            document.getElementById("messageFile");
+
+        const selectedFile =
+            document.getElementById("selectedFile");
+
+        const selectedFileName =
+            document.getElementById("selectedFileName");
+
+        const removeFile =
+            document.getElementById("removeFile");
+
+        const aiFile =
+            document.getElementById("aiFile");
+
+        const aiFileName =
+            document.getElementById("aiFileName");
+
+
+        /*
+         * ==========================================
+         * ТЕКУЩИЙ РЕЖИМ
+         * ==========================================
+         */
+
+        let currentMode = "study";
+
+
+        /*
+         * ==========================================
+         * ВЫБОР РЕЖИМА ИИ
+         * ==========================================
+         */
+
+        const modes =
+            document.querySelectorAll(".ai-mode");
+
+        modes.forEach(mode => {
+
+            mode.addEventListener(
+                "click",
+                function () {
+
+                    modes.forEach(item => {
+
+                        item.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+
+                    this.classList.add("active");
+
+
+                    currentMode =
+                        this.dataset.mode;
+
+
+                    /*
+                     * Меняем системное сообщение
+                     */
+
+                    let text =
+                        "Режим помощника изменён.";
+
+                    if (
+                        currentMode === "math"
+                    ) {
+
+                        text =
+                            "Теперь я буду ориентироваться на математические задачи и объяснения.";
+
+                    } else if (
+                        currentMode === "programming"
+                    ) {
+
+                        text =
+                            "Теперь я буду ориентироваться на программирование и алгоритмы.";
+
+                    } else {
+
+                        text =
+                            "Теперь я работаю в режиме общей подготовки к сессии.";
+                    }
+
+
+                    addAIMessage(text);
+
+                }
+            );
+
+        });
+
+
+        /*
+         * ==========================================
+         * ВЫБОР ФАЙЛА ДЛЯ СООБЩЕНИЯ
+         * ==========================================
+         */
+
+        messageFile.addEventListener(
+            "change",
+            function () {
+
+                if (!this.files.length) {
+                    return;
+                }
+
+
+                const file =
+                    this.files[0];
+
+
+                selectedFileName.textContent =
+                    "📎 " + file.name;
+
+
+                selectedFile.classList.add(
+                    "show"
+                );
+            }
+        );
+
+
+        /*
+         * Удаление выбранного файла
+         */
+
+        removeFile.addEventListener(
+            "click",
+            function () {
+
+                messageFile.value = "";
+
+                selectedFile.classList.remove(
+                    "show"
+                );
+            }
+        );
+
+
+        /*
+         * ==========================================
+         * ПОДКЛЮЧЕНИЕ СВОЕГО ИИ
+         * ==========================================
+         */
+
+        aiFile.addEventListener(
+            "change",
+            function () {
+
+                if (!this.files.length) {
+                    return;
+                }
+
+
+                const file =
+                    this.files[0];
+
+
+                aiFileName.textContent =
+                    "Выбран файл: " +
+                    file.name;
+
+
+                /*
+                 * Здесь можно обработать
+                 * загруженный файл конфигурации.
+                 *
+                 * Например:
+                 *
+                 * assistant.json
+                 *
+                 * {
+                 *     "name": "Мой ИИ",
+                 *     "apiUrl": "...",
+                 *     "model": "..."
+                 * }
+                 */
+
+
+                alert(
+                    "Файл помощника выбран. Теперь его можно подключить к API в функции sendToAI()."
+                );
+
+            }
+        );
+
+
+        /*
+         * ==========================================
+         * ОТПРАВКА СООБЩЕНИЯ
+         * ==========================================
+         */
+
+        sendButton.addEventListener(
+            "click",
+            sendMessage
+        );
+
+
+        /*
+         * Отправка через Enter
+         *
+         * Shift + Enter —
+         * новая строка.
+         */
+
+        messageInput.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    sendMessage();
+                }
+
+            }
+        );
+
+
+        /*
+         * ==========================================
+         * ОСНОВНАЯ ФУНКЦИЯ ОТПРАВКИ
+         * ==========================================
+         */
+
+        async function sendMessage() {
+
+            const text =
+                messageInput.value.trim();
+
+
+            /*
+             * Если нет текста и файла,
+             * ничего не отправляем.
+             */
+
+            if (
+                !text &&
+                !messageFile.files.length
+            ) {
+
+                return;
+            }
+
+
+            /*
+             * Получаем файл
+             */
+
+            const file =
+                messageFile.files.length
+                    ? messageFile.files[0]
+                    : null;
+
+
+            /*
+             * Добавляем сообщение пользователя
+             */
+
+            addUserMessage(
+                text,
+                file
+            );
+
+
+            /*
+             * Очищаем поле
+             */
+
+            messageInput.value = "";
+
+            messageFile.value = "";
+
+            selectedFile.classList.remove(
+                "show"
+            );
+
+
+            /*
+             * Показываем индикатор печати
+             */
+
+            typing.classList.add("show");
+
+            scrollToBottom();
+
+
+            /*
+             * Отправляем запрос ИИ
+             */
+
+            try {
+
+                const response =
+                    await sendToAI(
+                        text,
+                        file
+                    );
+
+
+                typing.classList.remove(
+                    "show"
+                );
+
+
+                addAIMessage(
+                    response
+                );
+
+            } catch (error) {
+
+                typing.classList.remove(
+                    "show"
+                );
+
+
+                addAIMessage(
+                    "Не удалось получить ответ от ИИ. Проверь подключение API."
+                );
+
+                console.error(error);
+            }
+
+        }
+
+
+        /*
+         * ==========================================
+         * ФУНКЦИЯ ПОДКЛЮЧЕНИЯ ИИ
+         * ==========================================
+         *
+         * ВАЖНО:
+         *
+         * Сейчас функция работает в ДЕМО-режиме.
+         *
+         * Чтобы подключить настоящий ИИ,
+         * замени содержимое этой функции
+         * запросом к своему backend.
+         */
+
+        async function sendToAI(
+            text,
+            file
+        ) {
+
+
+            /*
+             * --------------------------------------
+             * ДЕМО
+             * --------------------------------------
+             *
+             * Пока настоящий API не подключён,
+             * сайт имитирует ответ помощника.
+             */
+
+
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        900
+                    )
+            );
+
+
+            if (!text) {
+
+                return (
+                    "Я получил твой файл 📎. " +
+                    "После подключения настоящего ИИ " +
+                    "он сможет проанализировать его."
+                );
+
+            }
+
+
+            if (
+                currentMode === "math"
+            ) {
+
+                return (
+                    "Хороший вопрос! 🧮\n\n" +
+                    "Сейчас работает демонстрационный " +
+                    "режим. После подключения API здесь " +
+                    "появится настоящий ответ ИИ на твою " +
+                    "математическую задачу."
+                );
+
+            }
+
+
+            if (
+                currentMode === "programming"
+            ) {
+
+                return (
+                    "Давай разберём задачу по программированию! 💻\n\n" +
+                    "Сейчас это демонстрационный ответ. " +
+                    "Подключи API в функции sendToAI(), " +
+                    "и здесь будет настоящий ответ модели."
+                );
+
+            }
+
+
+            return (
+                "Я получил твой вопрос:\n\n" +
+                "«" +
+                text +
+                "»\n\n" +
+                "Сейчас работает демонстрационный режим. " +
+                "Подключи настоящий ИИ через backend, " +
+                "чтобы получать полноценные ответы."
+            );
+        }
+
+
+        /*
+         * ==========================================
+         * ДОБАВЛЕНИЕ СООБЩЕНИЯ ПОЛЬЗОВАТЕЛЯ
+         * ==========================================
+         */
+
+        function addUserMessage(
+            text,
+            file
+        ) {
+
+            const wrapper =
+                document.createElement("div");
+
+            wrapper.className =
+                "message user";
+
+
+            let attachment = "";
+
+
+            if (file) {
+
+                attachment = `
+                    <div class="attachment">
+                        📎 ${escapeHtml(file.name)}
+                    </div>
+                `;
+            }
+
+
+            wrapper.innerHTML = `
+
+                <div>
+
+                    <div class="message-bubble">
+
+                        ${escapeHtml(text)}
+
+                        ${attachment}
+
+                    </div>
+
+                    <div class="message-time">
+                        Сейчас
+                    </div>
+
+                </div>
+
+            `;
+
+
+            messages.insertBefore(
+                wrapper,
+                typing
+            );
+
+
+            scrollToBottom();
+        }
+
+
+        /*
+         * ==========================================
+         * ДОБАВЛЕНИЕ СООБЩЕНИЯ ИИ
+         * ==========================================
+         */
+
+        function addAIMessage(
+            text
+        ) {
+
+            const wrapper =
+                document.createElement("div");
+
+            wrapper.className =
+                "message ai";
+
+
+            /*
+             * Переводим переносы строк
+             * в HTML-переносы.
+             */
+
+            const formattedText =
+                escapeHtml(text)
+                    .replace(
+                        /\n/g,
+                        "<br>"
+                    );
+
+
+            wrapper.innerHTML = `
+
+                <div>
+
+                    <div class="message-bubble">
+
+                        ${formattedText}
+
+                    </div>
+
+                    <div class="message-time">
+                        Сейчас
+                    </div>
+
+                </div>
+
+            `;
+
+
+            messages.insertBefore(
+                wrapper,
+                typing
+            );
+
+
+            scrollToBottom();
+        }
+
+
+        /*
+         * ==========================================
+         * ОЧИСТКА ЧАТА
+         * ==========================================
+         */
+
+        clearChat.addEventListener(
+            "click",
+            function () {
+
+                const userMessages =
+                    messages.querySelectorAll(
+                        ".message"
+                    );
+
+
+                userMessages.forEach(
+                    message =>
+                        message.remove()
+                );
+
+
+                addAIMessage(
+                    "Чат очищен. Готов начать заново! 👋"
+                );
+
+            }
+        );
+
+
+        /*
+         * ==========================================
+         * ПРОКРУТКА ЧАТА ВНИЗ
+         * ==========================================
+         */
+
+        function scrollToBottom() {
+
+            messages.scrollTop =
+                messages.scrollHeight;
+        }
+
+
+        /*
+         * ==========================================
+         * ЗАЩИТА HTML
+         * ==========================================
+         */
+
+        function escapeHtml(
+            text
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.textContent =
+                text || "";
+
+            return div.innerHTML;
+        }
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сессия — подготовка к экзаменам</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5848d6;
+            --secondary: #a29bfe;
+            --text: #202124;
+            --muted: #6b7280;
+            --bg: #f7f7fb;
+            --white: #ffffff;
+            --border: #e8e8f0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #555;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* HERO */
+
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 90px 24px 70px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(42px, 6vw, 72px);
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 25px;
+        }
+
+        .hero-content h1 span {
+            color: var(--primary);
+        }
+
+        .hero-content p {
+            max-width: 620px;
+            font-size: 20px;
+            color: var(--muted);
+            margin-bottom: 35px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 23px;
+            border-radius: 12px;
+            font-weight: 700;
+            transition: 0.25s;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* HERO CARD */
+
+        .hero-card {
+            background: white;
+            border-radius: 28px;
+            padding: 28px;
+            box-shadow: 0 20px 60px rgba(30, 30, 60, 0.10);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::before {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: var(--secondary);
+            opacity: 0.18;
+            border-radius: 50%;
+            right: -60px;
+            top: -60px;
+        }
+
+        .progress-title {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .progress-title span {
+            color: var(--primary);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #eeeef7;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress {
+            width: 68%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+        }
+
+        .tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .task {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 14px;
+            border-radius: 13px;
+            background: #f8f8fc;
+        }
+
+        .task-icon {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: #e9e6ff;
+        }
+
+        .task-text {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .task.done .task-text {
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        /* FEATURES */
+
+        .features {
+            background: white;
+            padding: 80px 24px;
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-heading h2 {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 18px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .card {
+            padding: 32px;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: white;
+            transition: 0.25s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 40px rgba(40, 40, 80, 0.10);
+        }
+
+        .card-icon {
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: #eeecff;
+            font-size: 27px;
+            margin-bottom: 22px;
+        }
+
+        .card:nth-child(2) .card-icon {
+            background: #e6f8f2;
+        }
+
+        .card:nth-child(3) .card-icon {
+            background: #fff0df;
+        }
+
+        .card h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: var(--muted);
+            margin-bottom: 22px;
+            flex-grow: 1;
+        }
+
+        .card ul {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .card li {
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .card li::before {
+            content: "✓";
+            color: var(--primary);
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .card-link {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .card-link:hover {
+            text-decoration: underline;
+        }
+
+        /* CTA */
+
+        .cta {
+            max-width: 1200px;
+            margin: 70px auto;
+            padding: 65px 40px;
+            border-radius: 30px;
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #6c5ce7, #8e7df5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before,
+        .cta::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.10);
+        }
+
+        .cta::before {
+            width: 250px;
+            height: 250px;
+            left: -100px;
+            top: -130px;
+        }
+
+        .cta::after {
+            width: 300px;
+            height: 300px;
+            right: -100px;
+            bottom: -180px;
+        }
+
+        .cta h2 {
+            font-size: 40px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta .btn {
+            background: white;
+            color: var(--primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        /* FOOTER */
+
+        footer {
+            background: #171720;
+            color: #aaa;
+            padding: 30px 24px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            color: white;
+            font-weight: 700;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 850px) {
+            .nav-links {
+                gap: 15px;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                padding-top: 55px;
+            }
+
+            .hero-card {
+                max-width: 600px;
+                width: 100%;
+                margin: 0 auto;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .section-heading h2 {
+                font-size: 34px;
+            }
+
+            .cta {
+                margin: 50px 20px;
+                padding: 50px 25px;
+            }
+
+            .cta h2 {
+                font-size: 32px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .nav-container {
+                padding: 14px 18px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .logo-icon {
+                width: 34px;
+                height: 34px;
+            }
+
+            .nav-links a:nth-child(1) {
+                display: none;
+            }
+
+            .hero {
+                padding: 50px 20px;
+            }
+
+            .hero-content h1 {
+                font-size: 44px;
+                letter-spacing: -1px;
+            }
+
+            .hero-content p {
+                font-size: 17px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-buttons .btn {
+                width: 100%;
+            }
+
+            .features {
+                padding: 60px 20px;
+            }
+
+            .footer-container {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Навигация -->
+    <header class="navbar">
+        <div class="nav-container">
+
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🎓</span>
+                Сессия
+            </a>
+
+            <nav class="nav-links">
+                <a href="trainer.html">Тренажёр</a>
+                <a href="calendar.html">Календарь</a>
+                <a href="ai.html">ИИ-помощник</a>
+            </nav>
+
+        </div>
+    </header>
+
+
+    <!-- Главный экран -->
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <h1>
+                    Подготовься к
+                    <span>сессии</span>
+                    без стресса
+                </h1>
+
+                <p>
+                    Всё необходимое для подготовки к экзаменам
+                    в одном месте: тренируйся, планируй своё время
+                    и задавай вопросы ИИ-помощнику.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="trainer.html" class="btn btn-primary">
+                        🚀 Начать подготовку
+                    </a>
+
+                    <a href="#tools" class="btn btn-secondary">
+                        Узнать больше
+                    </a>
+                </div>
+
+            </div>
+
+
+            <!-- Карточка прогресса -->
+            <div class="hero-card">
+
+                <div class="progress-title">
+                    <span>Прогресс подготовки</span>
+                    <span>68%</span>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+
+                <div class="tasks">
+
+                    <div class="task done">
+                        <div class="task-icon">✓</div>
+                        <div class="task-text">
+                            Повторить лекции
+                        </div>
+                    </div>
+
+                    <div class="task done">
+                        <div class="task-icon">✓</div>
+                        <div class="task-text">
+                            Пройти тест по математике
+                        </div>
+                    </div>
+
+                    <div class="task">
+                        <div class="task-icon">📚</div>
+                        <div class="task-text">
+                            Повторить 3 темы
+                        </div>
+                    </div>
+
+                    <div class="task">
+                        <div class="task-icon">📝</div>
+                        <div class="task-text">
+                            Решить практические задания
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Инструменты -->
+        <section class="features" id="tools">
+
+            <div class="section-container">
+
+                <div class="section-heading">
+                    <h2>Всё для успешной подготовки</h2>
+                    <p>
+                        Выбери инструмент и начни заниматься прямо сейчас
+                    </p>
+                </div>
+
+
+                <div class="cards">
+
+                    <!-- Тренажёр -->
+                    <article class="card">
+
+                        <div class="card-icon">🧠</div>
+
+                        <h3>Тренажёр</h3>
+
+                        <p>
+                            Проверяй знания с помощью тестов,
+                            практических заданий и вопросов
+                            по учебным предметам.
+                        </p>
+
+                        <ul>
+                            <li>Тесты по предметам</li>
+                            <li>Практические задания</li>
+                            <li>Проверка ответов</li>
+                            <li>Отслеживание прогресса</li>
+                        </ul>
+
+                        <a href="trainer.html" class="card-link">
+                            Перейти в Тренажёр →
+                        </a>
+
+                    </article>
+
+
+                    <!-- Календарь -->
+                    <article class="card">
+
+                        <div class="card-icon">📅</div>
+
+                        <h3>Календарь</h3>
+
+                        <p>
+                            Планируй подготовку, добавляй экзамены
+                            и следи за всеми важными датами.
+                        </p>
+
+                        <ul>
+                            <li>Даты экзаменов</li>
+                            <li>План занятий</li>
+                            <li>Напоминания</li>
+                            <li>Дедлайны</li>
+                        </ul>
+
+                        <a href="calendar.html" class="card-link">
+                            Открыть Календарь →
+                        </a>
+
+                    </article>
+
+
+                    <!-- ИИ -->
+                    <article class="card">
+
+                        <div class="card-icon">🤖</div>
+
+                        <h3>ИИ-помощник</h3>
+
+                        <p>
+                            Получай объяснения сложных тем,
+                            разбирай задачи и составляй план подготовки.
+                        </p>
+
+                        <ul>
+                            <li>Объяснение сложных тем</li>
+                            <li>Разбор задач</li>
+                            <li>План подготовки</li>
+                            <li>Ответы на вопросы</li>
+                        </ul>
+
+                        <a href="ai.html" class="card-link">
+                            Спросить ИИ →
+                        </a>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CTA -->
+        <section class="cta">
+
+            <h2>Готов начать подготовку?</h2>
+
+            <p>
+                Раздели большую цель на небольшие шаги
+                и двигайся вперёд каждый день.
+            </p>
+
+            <a href="trainer.html" class="btn">
+                Начать подготовку 🚀
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <!-- Подвал -->
+    <footer>
+
+        <div class="footer-container">
+
+            <div class="footer-logo">
+                🎓 Сессия
+            </div>
+
+            <div>
+                © 2026 Сервис для подготовки к сессии
+            </div>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>

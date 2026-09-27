@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Тренажёр — Сессия</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5848d6;
+            --secondary: #a29bfe;
+            --text: #202124;
+            --muted: #6b7280;
+            --bg: #f7f7fb;
+            --white: #ffffff;
+            --border: #e8e8f0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: linear-gradient(
+                135deg,
+                var(--primary),
+                var(--secondary)
+            );
+
+            color: white;
+            font-size: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #555;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links .active {
+            color: var(--primary);
+        }
+
+        /* PAGE HEADER */
+
+        .page-header {
+            max-width: 1200px;
+            margin: 0 auto;
+
+            padding: 75px 24px 45px;
+
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: clamp(42px, 6vw, 60px);
+            line-height: 1.1;
+
+            margin-bottom: 18px;
+            letter-spacing: -1.5px;
+        }
+
+        .page-header h1 span {
+            color: var(--primary);
+        }
+
+        .page-header p {
+            max-width: 650px;
+            margin: 0 auto;
+
+            font-size: 19px;
+            color: var(--muted);
+        }
+
+        /* SUBJECTS */
+
+        .subjects {
+            max-width: 1200px;
+            margin: 0 auto;
+
+            padding: 20px 24px 80px;
+        }
+
+        .subjects-grid {
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 25px;
+        }
+
+        /* SUBJECT CARD */
+
+        .subject-card {
+            background: white;
+
+            border: 1px solid var(--border);
+            border-radius: 24px;
+
+            padding: 32px;
+
+            min-height: 390px;
+
+            display: flex;
+            flex-direction: column;
+
+            position: relative;
+            overflow: hidden;
+
+            transition: 0.25s;
+        }
+
+        .subject-card::before {
+            content: "";
+
+            position: absolute;
+
+            width: 170px;
+            height: 170px;
+
+            border-radius: 50%;
+
+            right: -80px;
+            top: -80px;
+
+            background: var(--secondary);
+
+            opacity: 0.12;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-7px);
+
+            box-shadow:
+                0 20px 45px rgba(40, 40, 80, 0.12);
+
+            border-color: #dcd8ff;
+        }
+
+        .subject-icon {
+            width: 70px;
+            height: 70px;
+
+            border-radius: 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 32px;
+
+            background: #eeecff;
+
+            margin-bottom: 25px;
+        }
+
+        .subject-card:nth-child(2) .subject-icon {
+            background: #e6f8f2;
+        }
+
+        .subject-card:nth-child(3) .subject-icon {
+            background: #fff0df;
+        }
+
+        .subject-card h2 {
+            font-size: 27px;
+            line-height: 1.2;
+
+            margin-bottom: 12px;
+        }
+
+        .subject-description {
+            color: var(--muted);
+
+            margin-bottom: 25px;
+
+            font-size: 16px;
+        }
+
+        .topics {
+            list-style: none;
+
+            margin-bottom: 30px;
+        }
+
+        .topics li {
+            color: #555;
+
+            margin-bottom: 9px;
+        }
+
+        .topics li::before {
+            content: "✓";
+
+            color: var(--primary);
+
+            font-weight: bold;
+
+            margin-right: 9px;
+        }
+
+        .subject-button {
+            margin-top: auto;
+
+            width: 100%;
+
+            padding: 14px 20px;
+
+            border-radius: 12px;
+
+            background: var(--primary);
+            color: white;
+
+            text-align: center;
+
+            font-weight: 700;
+
+            transition: 0.2s;
+        }
+
+        .subject-button:hover {
+            background: var(--primary-dark);
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 18px rgba(108, 92, 231, 0.25);
+        }
+
+        /* INFO */
+
+        .info {
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 0 24px 80px;
+        }
+
+        .info-box {
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 24px;
+
+            padding: 35px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 30px;
+        }
+
+        .info-icon {
+            min-width: 65px;
+            height: 65px;
+
+            border-radius: 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #eeecff;
+
+            font-size: 30px;
+        }
+
+        .info h3 {
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+
+        .info p {
+            color: var(--muted);
+        }
+
+        /* FOOTER */
+
+        footer {
+            background: #171720;
+
+            color: #aaa;
+
+            padding: 30px 24px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            color: white;
+
+            font-weight: 700;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 900px) {
+
+            .subjects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .subject-card {
+                min-height: auto;
+            }
+
+            .info-box {
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .nav-container {
+                padding: 14px 18px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .logo-icon {
+                width: 34px;
+                height: 34px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-links a:nth-child(2) {
+                display: none;
+            }
+
+            .page-header {
+                padding: 50px 20px 35px;
+            }
+
+            .page-header h1 {
+                font-size: 42px;
+            }
+
+            .page-header p {
+                font-size: 17px;
+            }
+
+            .subjects {
+                padding: 15px 20px 60px;
+            }
+
+            .subject-card {
+                padding: 27px;
+            }
+
+            .info {
+                padding: 0 20px 60px;
+            }
+
+            .info-box {
+                flex-direction: column;
+                padding: 28px;
+            }
+
+            .footer-container {
+                flex-direction: column;
+
+                gap: 10px;
+
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- НАВИГАЦИЯ -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <a href="index.html" class="logo">
+
+                <span class="logo-icon">
+                    🎓
+                </span>
+
+                Сессия
+
+            </a>
+
+
+            <nav class="nav-links">
+
+                <a href="trainer.html" class="active">
+                    Тренажёр
+                </a>
+
+                <a href="calendar.html">
+                    Календарь
+                </a>
+
+                <a href="ai.html">
+                    ИИ-помощник
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- ЗАГОЛОВОК -->
+
+    <main>
+
+        <section class="page-header">
+
+            <h1>
+                Выбери направление
+                <span>подготовки</span>
+            </h1>
+
+            <p>
+                Тренируйся, проверяй свои знания и
+                готовься к экзаменам по нужному предмету.
+            </p>
+
+        </section>
+
+
+        <!-- ПРЕДМЕТЫ -->
+
+        <section class="subjects">
+
+            <div class="subjects-grid">
+
+
+                <!-- МАТАН -->
+
+                <article class="subject-card">
+
+                    <div class="subject-icon">
+                        ∫
+                    </div>
+
+                    <h2>
+                        Мат. анализ
+                    </h2>
+
+                    <p class="subject-description">
+                        Изучай математический анализ
+                        и отрабатывай навыки решения задач.
+                    </p>
+
+                    <ul class="topics">
+
+                        <li>
+                            Пределы и непрерывность
+                        </li>
+
+                        <li>
+                            Производные
+                        </li>
+
+                        <li>
+                            Интегралы
+                        </li>
+
+                        <li>
+                            Ряды
+                        </li>
+
+                    </ul>
+
+                    <a
+                        href="math-analysis.html"
+                        class="subject-button"
+                    >
+                        Начать тренировку →
+                    </a>
+
+                </article>
+
+
+                <!-- ПРОГРАММИРОВАНИЕ -->
+
+                <article class="subject-card">
+
+                    <div class="subject-icon">
+                        &lt;/&gt;
+                    </div>
+
+                    <h2>
+                        Программирование на C
+                    </h2>
+
+                    <p class="subject-description">
+                        Практикуй алгоритмы и основы
+                        программирования на языке C.
+                    </p>
+
+                    <ul class="topics">
+
+                        <li>
+                            Синтаксис языка C
+                        </li>
+
+                        <li>
+                            Условия и циклы
+                        </li>
+
+                        <li>
+                            Массивы и строки
+                        </li>
+
+                        <li>
+                            Указатели и функции
+                        </li>
+
+                    </ul>
+
+                    <a
+                        href="c-programming.html"
+                        class="subject-button"
+                    >
+                        Начать тренировку →
+                    </a>
+
+                </article>
+
+
+                <!-- АЛГЕБРА И ГЕОМЕТРИЯ -->
+
+                <article class="subject-card">
+
+                    <div class="subject-icon">
+                        📐
+                    </div>
+
+                    <h2>
+                        Алгебра и геометрия
+                    </h2>
+
+                    <p class="subject-description">
+                        Повторяй основные формулы и
+                        решай задачи по алгебре и геометрии.
+                    </p>
+
+                    <ul class="topics">
+
+                        <li>
+                            Матрицы и определители
+                        </li>
+
+                        <li>
+                            Векторы
+                        </li>
+
+                        <li>
+                            Линейные уравнения
+                        </li>
+
+                        <li>
+                            Аналитическая геометрия
+                        </li>
+
+                    </ul>
+
+                    <a
+                        href="algebra-geometry.html"
+                        class="subject-button"
+                    >
+                        Начать тренировку →
+                    </a>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- ИНФОРМАЦИОННЫЙ БЛОК -->
+
+        <section class="info">
+
+            <div class="info-box">
+
+                <div class="info-icon">
+                    💡
+                </div>
+
+                <div>
+
+                    <h3>
+                        Совет для подготовки
+                    </h3>
+
+                    <p>
+                        Лучше заниматься регулярно небольшими
+                        блоками, чем пытаться освоить весь материал
+                        за один день. Выбери предмет и начни
+                        с нескольких тренировочных заданий.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <div class="footer-container">
+
+            <div class="footer-logo">
+                🎓 Сессия
+            </div>
+
+            <div>
+                © 2026 Сервис для подготовки к сессии
+            </div>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>
